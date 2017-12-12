@@ -131,7 +131,7 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 	 * @return string
 	 */
 	public function getVersion() {
-		return '7.0';
+		return '7.2';
 	}
 
 	/**
