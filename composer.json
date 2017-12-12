@@ -1,0 +1,25 @@
+{
+  "name": "ipunkt/rancherize-php72",
+  "description": "Rancherize plugin which adds php72",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Sven Speckmaier",
+      "email": "sps@ipunkt.biz"
+    }
+  ],
+  "autoload":{
+    "psr-4": {
+      "RancherizePhp70\\": "plugin/"
+    }
+  },
+
+  "require": {},
+  "require-dev": {
+    "ipunkt/rancherize": "dev-master as 2.19.0"
+  },
+  "extra":{
+    "rancherize-provider":"RancherizePhp70\\Php70Provider"
+  }
+}
