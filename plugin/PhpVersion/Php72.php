@@ -16,7 +16,7 @@ use Rancherize\Configuration\Configuration;
  */
 class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, DefaultTimezone, MailTarget  {
 
-	const PHP_IMAGE = 'ipunktbs/php:7.2-fpm-dev';
+	const PHP_IMAGE = 'ipunktbs/php:7.2-fpm';
 
 	/**
 	 * @var string|Service
