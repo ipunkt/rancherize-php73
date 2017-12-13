@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b6ed3e42cf98b23e571ececf72ec3a11",
+    "content-hash": "212ce618f96e558b31f4da373e8b3bbc",
     "packages": [],
     "packages-dev": [
         {
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ipunkt/rancherize.git",
-                "reference": "5dec857d595ab6bce08058f2bd9afd0abdf2e496"
+                "reference": "2b657ccc9d3a423f53ad6af35c04154c9f970f4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ipunkt/rancherize/zipball/5dec857d595ab6bce08058f2bd9afd0abdf2e496",
-                "reference": "5dec857d595ab6bce08058f2bd9afd0abdf2e496",
+                "url": "https://api.github.com/repos/ipunkt/rancherize/zipball/2b657ccc9d3a423f53ad6af35c04154c9f970f4e",
+                "reference": "2b657ccc9d3a423f53ad6af35c04154c9f970f4e",
                 "shasum": ""
             },
             "require": {
@@ -64,7 +64,7 @@
                 "docker",
                 "rancher"
             ],
-            "time": "2017-12-11T17:24:24+00:00"
+            "time": "2017-12-13T09:42:55+00:00"
         },
         {
             "name": "ipunkt/rancherize-php53",

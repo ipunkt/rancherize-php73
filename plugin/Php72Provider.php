@@ -1,15 +1,15 @@
-<?php namespace RancherizePhp70;
+<?php namespace RancherizePhp72;
 
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\PhpFpmMaker;
 use Rancherize\Plugin\Provider;
 use Rancherize\Plugin\ProviderTrait;
-use RancherizePhp70\PhpVersion\Php72;
+use RancherizePhp72\PhpVersion\Php72;
 
 /**
  * Class Php70Provider
  * @package RancherizePhp70
  */
-class Php70Provider implements Provider {
+class Php72Provider implements Provider {
 
 	use ProviderTrait;
 

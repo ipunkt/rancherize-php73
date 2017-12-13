@@ -11,7 +11,7 @@
   ],
   "autoload":{
     "psr-4": {
-      "RancherizePhp70\\": "plugin/"
+      "RancherizePhp72\\": "plugin/"
     }
   },
 
@@ -20,6 +20,6 @@
     "ipunkt/rancherize": "dev-master as 2.19.0"
   },
   "extra":{
-    "rancherize-provider":"RancherizePhp70\\Php70Provider"
+    "rancherize-provider":"RancherizePhp72\\Php72Provider"
   }
 }

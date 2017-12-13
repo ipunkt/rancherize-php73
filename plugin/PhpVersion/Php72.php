@@ -1,11 +1,19 @@
-<?php namespace RancherizePhp70\PhpVersion;
+<?php namespace RancherizePhp72\PhpVersion;
 
+use Rancherize\Blueprint\Infrastructure\Dockerfile\Dockerfile;
 use Rancherize\Blueprint\Infrastructure\Infrastructure;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Configurations\MailTarget;
+use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\DebugImage;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\DefaultTimezone;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\MemoryLimit;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\PhpVersion;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\PostLimit;
+use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Traits\DebugImageTrait;
+use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Traits\DefaultTimezoneTrait;
+use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Traits\MailTargetTrait;
+use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Traits\MemoryLimitTrait;
+use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Traits\PostLimitTrait;
+use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Traits\UploadFileLimitTrait;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\UploadFileLimit;
 use Rancherize\Blueprint\Infrastructure\Service\Service;
 use Rancherize\Configuration\Configuration;
@@ -14,64 +22,26 @@ use Rancherize\Configuration\Configuration;
  * Class Php72
  * @package RancherizePhp70\PhpVersion
  */
-class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, DefaultTimezone, MailTarget  {
+class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, DefaultTimezone, MailTarget, DebugImage  {
 
 	const PHP_IMAGE = 'ipunktbs/php:7.2-fpm';
+	use MemoryLimitTrait;
+	use PostLimitTrait;
+	use UploadFileLimitTrait;
+	use DefaultTimezoneTrait;
+	use MailTargetTrait;
+	use DebugImageTrait;
 
 	/**
 	 * @var string|Service
 	 */
 	protected $appTarget;
 
-	/**
-	 * @var string
-	 */
-	private $memoryLimit = self::DEFAULT_MEMORY_LIMIT;
-
-	/**
-	 * @var string
-	 */
-	private $uploadFileLimit = self::DEFAULT_UPLOAD_FILE_LIMIT;
-
-	/**
-	 * @var string
-	 */
-	private $postLimit = self::DEFAULT_POST_LIMIT;
-
-	/**
-	 * @var string
-	 */
-	protected $defaultTimezone = self::DEFAULT_TIMEZONE;
-	/**
-	 * @var string
-	 */
-	private $mailHost;
-
-	/**
-	 * @var int
-	 */
-	private $mailPort;
-
-	/**
-	 * @var string
-	 */
-	private $mailUsername;
-
-	/**
-	 * @var string
-	 */
-	private $mailPassword;
-
-	/**
-	 * @var string
-	 */
-	private $mailAuthentication;
-
 	public function make( Configuration $config, Service $mainService, Infrastructure $infrastructure) {
 
 		$phpFpmService = new Service();
 		$phpFpmService->setName($mainService->getName().'-PHP-FPM');
-		$phpFpmService->setImage( self::PHP_IMAGE );
+		$this->setImage($phpFpmService);
 		$phpFpmService->setRestart(Service::RESTART_UNLESS_STOPPED);
 
 		$memoryLimit = $this->memoryLimit;
@@ -166,7 +136,7 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 		$phpCommandService = new Service();
 		$phpCommandService->setCommand($command);
 		$phpCommandService->setName('PHP-'.$commandName);
-		$phpCommandService->setImage( self::PHP_IMAGE );
+		$this->setImage( $phpCommandService );
 		$phpCommandService->setRestart(Service::RESTART_START_ONCE);
 		$this->addAppSource($phpCommandService);
 
@@ -178,76 +148,6 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 
 		$mainService->addSidekick($phpCommandService);
 		return $phpCommandService;
-	}
-
-	/**
-	 * @return $this
-	 */
-	public function setMemoryLimit( $limit ) {
-		$this->memoryLimit = $limit;
-		return $this;
-	}
-
-	/**
-	 * @return $this
-	 */
-	public function setPostLimit( $limit ) {
-		$this->postLimit = $limit;
-		return $this;
-	}
-
-	/**
-	 * @return $this
-	 */
-	public function setUploadFileLimit( $limit ) {
-		$this->uploadFileLimit = $limit;
-		return $this;
-	}
-
-	/**
-	 * Set the default php timezone
-	 *
-	 * @param $defaultTimezone
-	 * @return $this
-	 */
-	public function setDefaultTimezone( $defaultTimezone ) {
-		$this->defaultTimezone = $defaultTimezone;
-		return $this;
-	}
-
-	/**
-	 * @param string $host
-	 */
-	public function setMailHost( string $host ) {
-		$this->mailHost = $host;
-	}
-
-	/**
-	 * @param int $port
-	 */
-	public function setMailPort( int $port ) {
-		$this->mailPort = $port;
-	}
-
-	/**
-	 * @param string $username
-	 */
-	public function setMailUsername( string $username ) {
-		$this->mailUsername = $username;
-	}
-
-	/**
-	 * @param string $password
-	 */
-	public function setMailPassword( string $password ) {
-		$this->mailPassword = $password;
-	}
-
-	/**
-	 * @param string $authMethod
-	 */
-	public function setMailAuthentication( string $authMethod ) {
-		$this->mailAuthentication = $authMethod;
 	}
 
 	/**
@@ -263,5 +163,22 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 
 		list($hostDirectory, $containerDirectory) = $appTarget;
 		$phpFpmService->addVolume($hostDirectory, $containerDirectory);
+	}
+
+	protected function setImage(Service $service) {
+		$service->setImage( self::PHP_IMAGE );
+		if( !$this->debug )
+			return;
+
+		$debugDockerfile = new Dockerfile();
+		$debugDockerfile->setFrom( self::PHP_IMAGE );
+		$debugDockerfile->run('apk add --no-cache $PHPIZE_DEPS');
+		$debugDockerfile->run('docker-php-source extract');
+		$debugDockerfile->run('pecl install xdebug-2.6.0alpha1');
+		$debugDockerfile->run('docker-php-source delete');
+		$debugDockerfile->run('docker-php-ext-enable xdebug');
+		$debugDockerfile->run('apk del $PHPIZE_DEPS');
+
+		$service->setImage($debugDockerfile);
 	}
 }
