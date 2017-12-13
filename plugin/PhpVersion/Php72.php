@@ -180,8 +180,12 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 
 	protected function setImage(Service $service) {
 		$image = self::PHP_IMAGE;
-		if( $this->debug )
-			$image = $this->debugImageBuilder->makeImage($service, '2.6.0alpha1');
+		if( $this->debug ) {
+			$image = $this->debugImageBuilder->makeImage(self::PHP_IMAGE,'2.6.0alpha1');
+			$service->setEnvironmentVariable('XDEBUG_REMOTE_HOST', gethostname());
+			if($this->debugListener !== null)
+				$service->setEnvironmentVariable('XDEBUG_REMOTE_HOST', $this->debugListener);
+		}
 
 		$service->setImage( $image );
 	}
