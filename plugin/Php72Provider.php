@@ -1,5 +1,6 @@
 <?php namespace RancherizePhp72;
 
+use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\AlpineDebugImageBuilder;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\PhpFpmMaker;
 use Rancherize\Plugin\Provider;
 use Rancherize\Plugin\ProviderTrait;
@@ -16,8 +17,8 @@ class Php72Provider implements Provider {
 	/**
 	 */
 	public function register() {
-		$this->container[Php72::class] = function() {
-			return new Php72();
+		$this->container[Php72::class] = function($c) {
+			return new Php72( $c[AlpineDebugImageBuilder::class] );
 		};
 	}
 

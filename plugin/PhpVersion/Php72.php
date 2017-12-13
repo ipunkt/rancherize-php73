@@ -2,6 +2,7 @@
 
 use Rancherize\Blueprint\Infrastructure\Dockerfile\Dockerfile;
 use Rancherize\Blueprint\Infrastructure\Infrastructure;
+use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\AlpineDebugImageBuilder;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Configurations\MailTarget;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\DebugImage;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\DefaultTimezone;
@@ -36,6 +37,18 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 	 * @var string|Service
 	 */
 	protected $appTarget;
+	/**
+	 * @var AlpineDebugImageBuilder
+	 */
+	private $debugImageBuilder;
+
+	/**
+	 * Php72 constructor.
+	 * @param AlpineDebugImageBuilder $debugImageBuilder
+	 */
+	public function __construct( AlpineDebugImageBuilder $debugImageBuilder) {
+		$this->debugImageBuilder = $debugImageBuilder;
+	}
 
 	public function make( Configuration $config, Service $mainService, Infrastructure $infrastructure) {
 
@@ -166,19 +179,10 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 	}
 
 	protected function setImage(Service $service) {
-		$service->setImage( self::PHP_IMAGE );
-		if( !$this->debug )
-			return;
+		$image = self::PHP_IMAGE;
+		if( $this->debug )
+			$image = $this->debugImageBuilder->makeImage($service, '2.6.0alpha1');
 
-		$debugDockerfile = new Dockerfile();
-		$debugDockerfile->setFrom( self::PHP_IMAGE );
-		$debugDockerfile->run('apk add --no-cache $PHPIZE_DEPS');
-		$debugDockerfile->run('docker-php-source extract');
-		$debugDockerfile->run('pecl install xdebug-2.6.0alpha1');
-		$debugDockerfile->run('docker-php-source delete');
-		$debugDockerfile->run('docker-php-ext-enable xdebug');
-		$debugDockerfile->run('apk del $PHPIZE_DEPS');
-
-		$service->setImage($debugDockerfile);
+		$service->setImage( $image );
 	}
 }
