@@ -87,6 +87,7 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 			$phpFpmService->setEnvironmentVariable($name, $value);
 
 		$mainService->addLink($phpFpmService, 'phpfpm');
+		$mainService->setEnvironmentVariable('BACKEND_HOST', $phpFpmService->getName().':9000');
 
 		/**
 		 * Copy links from the main service so databases etc are available
