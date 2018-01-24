@@ -1,6 +1,5 @@
 <?php namespace RancherizePhp72\PhpVersion;
 
-use Rancherize\Blueprint\Infrastructure\Dockerfile\Dockerfile;
 use Rancherize\Blueprint\Infrastructure\Infrastructure;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\AlpineDebugImageBuilder;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Configurations\MailTarget;
@@ -53,7 +52,12 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 	public function make( Configuration $config, Service $mainService, Infrastructure $infrastructure) {
 
 		$phpFpmService = new Service();
-		$phpFpmService->setName($mainService->getName().'-PHP-FPM');
+		$phpFpmService->setName( function() use ($mainService) {
+			$name = $mainService->getName() . '-PHP-FPM';
+			$mainService->setEnvironmentVariable('BACKEND_HOST', $name.':9000');
+			return $name; }
+		);
+
 		$this->setImage($phpFpmService);
 		$phpFpmService->setRestart(Service::RESTART_UNLESS_STOPPED);
 
