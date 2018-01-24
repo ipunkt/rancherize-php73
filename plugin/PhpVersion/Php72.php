@@ -55,8 +55,8 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 		$phpFpmService->setName( function() use ($mainService) {
 			$name = $mainService->getName() . '-PHP-FPM';
 			$mainService->setEnvironmentVariable('BACKEND_HOST', $name.':9000');
-			return $name; }
-		);
+			return $name;
+		});
 
 		$this->setImage($phpFpmService);
 		$phpFpmService->setRestart(Service::RESTART_UNLESS_STOPPED);
@@ -153,7 +153,10 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 
 		$phpCommandService = new Service();
 		$phpCommandService->setCommand($command);
-		$phpCommandService->setName('PHP-'.$commandName);
+		$phpCommandService->setName( function() use ($mainService, $commandName) {
+			$name = $mainService->getName() . '-PHP-'.$commandName;
+			return $name;
+		});
 		$this->setImage( $phpCommandService );
 		$phpCommandService->setRestart(Service::RESTART_START_ONCE);
 		$this->addAppSource($phpCommandService);
