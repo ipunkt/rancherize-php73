@@ -167,6 +167,9 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 		foreach( $mainService->getEnvironmentVariables() as $name => $value )
 			$phpCommandService->setEnvironmentVariable($name, $value);
 
+
+		$phpCommandService->addLinksFrom($mainService);
+
 		$mainService->addSidekick($phpCommandService);
 		return $phpCommandService;
 	}
