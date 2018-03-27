@@ -1,5 +1,6 @@
 <?php namespace RancherizePhp72\PhpVersion;
 
+use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Configurations\UpdatesBackendEnvironment;
 use Rancherize\Blueprint\Infrastructure\Infrastructure;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\AlpineDebugImageBuilder;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Configurations\MailTarget;
@@ -31,6 +32,7 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 	use DefaultTimezoneTrait;
 	use MailTargetTrait;
 	use DebugImageTrait;
+	use UpdatesBackendEnvironmentTrait;
 
 	/**
 	 * @var string|Service
@@ -54,7 +56,10 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 		$phpFpmService = new Service();
 		$phpFpmService->setName( function() use ($mainService) {
 			$name = $mainService->getName() . '-PHP-FPM';
-			$mainService->setEnvironmentVariable('BACKEND_HOST', $name.':9000');
+
+			if($this->updateBackendEnvironment)
+				$mainService->setEnvironmentVariable('BACKEND_HOST', $name.':9000');
+
 			return $name;
 		});
 
