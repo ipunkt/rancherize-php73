@@ -1,6 +1,7 @@
 <?php namespace RancherizePhp72\PhpVersion;
 
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Configurations\UpdatesBackendEnvironment;
+use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Traits\UpdatesBackendEnvironmentTrait;
 use Rancherize\Blueprint\Infrastructure\Infrastructure;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\AlpineDebugImageBuilder;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Configurations\MailTarget;
@@ -23,7 +24,7 @@ use Rancherize\Configuration\Configuration;
  * Class Php72
  * @package RancherizePhp70\PhpVersion
  */
-class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, DefaultTimezone, MailTarget, DebugImage  {
+class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, DefaultTimezone, MailTarget, DebugImage, UpdatesBackendEnvironment  {
 
 	const PHP_IMAGE = 'ipunktbs/php:7.2-fpm';
 	use MemoryLimitTrait;
