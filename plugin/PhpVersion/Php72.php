@@ -1,7 +1,5 @@
 <?php namespace RancherizePhp72\PhpVersion;
 
-use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Configurations\UpdatesBackendEnvironment;
-use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Traits\UpdatesBackendEnvironmentTrait;
 use Rancherize\Blueprint\Infrastructure\Infrastructure;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\AlpineDebugImageBuilder;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Configurations\MailTarget;
@@ -17,6 +15,7 @@ use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Traits\MemoryLimitT
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Traits\PostLimitTrait;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\Traits\UploadFileLimitTrait;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\UploadFileLimit;
+use Rancherize\Blueprint\Infrastructure\Service\NetworkMode\ShareNetworkMode;
 use Rancherize\Blueprint\Infrastructure\Service\Service;
 use Rancherize\Configuration\Configuration;
 
@@ -24,7 +23,7 @@ use Rancherize\Configuration\Configuration;
  * Class Php72
  * @package RancherizePhp70\PhpVersion
  */
-class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, DefaultTimezone, MailTarget, DebugImage, UpdatesBackendEnvironment  {
+class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, DefaultTimezone, MailTarget, DebugImage {
 
 	const PHP_IMAGE = 'ipunktbs/php:7.2-fpm';
 	use MemoryLimitTrait;
@@ -33,7 +32,6 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 	use DefaultTimezoneTrait;
 	use MailTargetTrait;
 	use DebugImageTrait;
-	use UpdatesBackendEnvironmentTrait;
 
 	/**
 	 * @var string|Service
@@ -55,11 +53,11 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 	public function make( Configuration $config, Service $mainService, Infrastructure $infrastructure) {
 
 		$phpFpmService = new Service();
+		$mainService->setEnvironmentVariable('BACKEND_HOST', '127.0.0.1:9000');
+		$phpFpmService->setNetworkMode( new ShareNetworkMode($mainService) );
+
 		$phpFpmService->setName( function() use ($mainService) {
 			$name = $mainService->getName() . '-PHP-FPM';
-
-			if($this->updateBackendEnvironment)
-				$mainService->setEnvironmentVariable('BACKEND_HOST', $name.':9000');
 
 			return $name;
 		});
@@ -108,10 +106,6 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 		 */
 		foreach( $mainService->getEnvironmentVariables() as $name => $value )
 			$phpFpmService->setEnvironmentVariable($name, $value);
-
-		$mainService->addLink($phpFpmService, 'phpfpm');
-		if($this->updateBackendEnvironment)
-			$mainService->setEnvironmentVariable('BACKEND_HOST', $name.':9000');
 
 		/**
 		 * Copy links from the main service so databases etc are available

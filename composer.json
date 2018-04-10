@@ -15,9 +15,10 @@
     }
   },
 
-  "require": {},
+  "require": {
+    "ipunkt/rancherize": "^2.22.0"
+  },
   "require-dev": {
-    "ipunkt/rancherize": "^2.20.0"
   },
   "extra":{
     "rancherize-provider":"RancherizePhp72\\Php72Provider"

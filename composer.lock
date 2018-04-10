@@ -4,21 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "af9f85afcb987898b675509659ba3774",
-    "packages": [],
-    "packages-dev": [
+    "content-hash": "330ad9e339e33bb795e30f5ef19f581a",
+    "packages": [
         {
             "name": "ipunkt/rancherize",
-            "version": "2.20.6",
+            "version": "2.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ipunkt/rancherize.git",
-                "reference": "c2cbbfcd274af38766388942d4a362b0e79afa7e"
+                "reference": "dfa4842741f8bb792179a409f3363455227c1287"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ipunkt/rancherize/zipball/c2cbbfcd274af38766388942d4a362b0e79afa7e",
-                "reference": "c2cbbfcd274af38766388942d4a362b0e79afa7e",
+                "url": "https://api.github.com/repos/ipunkt/rancherize/zipball/dfa4842741f8bb792179a409f3363455227c1287",
+                "reference": "dfa4842741f8bb792179a409f3363455227c1287",
                 "shasum": ""
             },
             "require": {
@@ -65,7 +64,7 @@
                 "docker",
                 "rancher"
             ],
-            "time": "2018-03-28T08:34:04+00:00"
+            "time": "2018-04-10T09:29:54+00:00"
         },
         {
             "name": "ipunkt/rancherize-php53",
@@ -607,6 +606,7 @@
             "time": "2018-02-16T09:50:28+00:00"
         }
     ],
+    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": [],
