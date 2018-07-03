@@ -101,11 +101,9 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 
 		$this->addAppSource($phpFpmService);
 
-		/**
-		 * Copy environment variables because environment variables are expected to be available in php
-		 */
-		foreach( $mainService->getEnvironmentVariables() as $name => $value )
-			$phpFpmService->setEnvironmentVariable($name, $value);
+		$phpFpmService->setEnvironmentVariablesCallback(function() use ($mainService) {
+			return $mainService->getEnvironmentVariables();
+		});
 
 		$mainService->addSidekick($phpFpmService);
 		$infrastructure->addService($phpFpmService);
@@ -157,11 +155,9 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 		$phpCommandService->setRestart(Service::RESTART_START_ONCE);
 		$this->addAppSource($phpCommandService);
 
-		/**
-		 * Copy environment variables because environment variables are expected to be available in php
-		 */
-		foreach( $mainService->getEnvironmentVariables() as $name => $value )
-			$phpCommandService->setEnvironmentVariable($name, $value);
+		$phpCommandService->setEnvironmentVariablesCallback(function() use ($mainService) {
+			return $mainService->getEnvironmentVariables();
+		});
 
 
 		$phpCommandService->addLinksFrom($mainService);

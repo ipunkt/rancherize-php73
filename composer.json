@@ -16,7 +16,7 @@
   },
 
   "require": {
-    "ipunkt/rancherize": "^2.22.0"
+    "ipunkt/rancherize": "^2.24.1"
   },
   "require-dev": {
   },
