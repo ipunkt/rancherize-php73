@@ -57,7 +57,7 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 		$phpFpmService->setNetworkMode( new ShareNetworkMode($mainService) );
 
 		$phpFpmService->setName( function() use ($mainService) {
-			$name = $mainService->getName() . '-PHP-FPM';
+			$name = 'PHP-FPM-'.$mainService->getName();
 
 			return $name;
 		});
@@ -148,7 +148,7 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 		$phpCommandService = new Service();
 		$phpCommandService->setCommand($command);
 		$phpCommandService->setName( function() use ($mainService, $commandName) {
-			$name = $mainService->getName() . '-PHP-'.$commandName;
+			$name = '-PHP-'.$commandName.'-'.$mainService->getName() ;
 			return $name;
 		});
 		$this->setImage( $phpCommandService );
