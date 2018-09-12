@@ -46,67 +46,75 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 	 * Php72 constructor.
 	 * @param AlpineDebugImageBuilder $debugImageBuilder
 	 */
-	public function __construct( AlpineDebugImageBuilder $debugImageBuilder) {
+	public function __construct( AlpineDebugImageBuilder $debugImageBuilder ) {
 		$this->debugImageBuilder = $debugImageBuilder;
 	}
 
-	public function make( Configuration $config, Service $mainService, Infrastructure $infrastructure) {
+	/**
+	 * @param Configuration $config
+	 * @param Service $mainService
+	 * @param Infrastructure $infrastructure
+	 * @param Closure $customize
+	 */
+	public function make( Configuration $config, Service $mainService, Infrastructure $infrastructure, Closure $customize = null ) {
+		if ( $customize === null )
+			$customize = function(Service $service) {};
+
 
 		$phpFpmService = new Service();
-		$mainService->setEnvironmentVariable('BACKEND_HOST', '127.0.0.1:9000');
-		$phpFpmService->setNetworkMode( new ShareNetworkMode($mainService) );
+		$mainService->setEnvironmentVariable( 'BACKEND_HOST', '127.0.0.1:9000' );
+		$phpFpmService->setNetworkMode( new ShareNetworkMode( $mainService ) );
 
-		$phpFpmService->setName( function() use ($mainService) {
-			$name = 'PHP-FPM-'.$mainService->getName();
+		$phpFpmService->setName( function () use ( $mainService ) {
+			$name = 'PHP-FPM-' . $mainService->getName();
 
 			return $name;
-		});
+		} );
 
-		$this->setImage($phpFpmService);
-		$phpFpmService->setRestart(Service::RESTART_UNLESS_STOPPED);
+		$this->setImage( $phpFpmService );
+		$phpFpmService->setRestart( Service::RESTART_UNLESS_STOPPED );
 
 		$memoryLimit = $this->memoryLimit;
-		if( $memoryLimit !== self::DEFAULT_MEMORY_LIMIT )
-			$phpFpmService->setEnvironmentVariable('PHP_MEMORY_LIMIT', $memoryLimit);
+		if ( $memoryLimit !== self::DEFAULT_MEMORY_LIMIT )
+			$phpFpmService->setEnvironmentVariable( 'PHP_MEMORY_LIMIT', $memoryLimit );
 		$postLimit = $this->postLimit;
-		if( $postLimit !== self::DEFAULT_POST_LIMIT )
-			$phpFpmService->setEnvironmentVariable('PHP_POST_MAX_SIZE', $postLimit);
+		if ( $postLimit !== self::DEFAULT_POST_LIMIT )
+			$phpFpmService->setEnvironmentVariable( 'PHP_POST_MAX_SIZE', $postLimit );
 		$uploadFileLimit = $this->uploadFileLimit;
-		if( $uploadFileLimit !== self::DEFAULT_UPLOAD_FILE_LIMIT )
-			$phpFpmService->setEnvironmentVariable('PHP_UPLOAD_MAX_FILESIZE', $uploadFileLimit);
+		if ( $uploadFileLimit !== self::DEFAULT_UPLOAD_FILE_LIMIT )
+			$phpFpmService->setEnvironmentVariable( 'PHP_UPLOAD_MAX_FILESIZE', $uploadFileLimit );
 		$defaultTimezone = $this->defaultTimezone;
-		if( $defaultTimezone !== self::DEFAULT_TIMEZONE)
-			$phpFpmService->setEnvironmentVariable('DEFAULT_TIMEZONE', $defaultTimezone);
+		if ( $defaultTimezone !== self::DEFAULT_TIMEZONE )
+			$phpFpmService->setEnvironmentVariable( 'DEFAULT_TIMEZONE', $defaultTimezone );
 
 		$mailHost = $this->mailHost;
 		$mailPort = $this->mailPort;
 
-		if($mailHost !== null && $mailPort !== null)
-			$mailHost .= ':'.$mailPort;
+		if ( $mailHost !== null && $mailPort !== null )
+			$mailHost .= ':' . $mailPort;
 
-		if($mailHost !== null)
-			$phpFpmService->setEnvironmentVariable('SMTP_SERVER', $mailHost.':'.$mailPort);
+		if ( $mailHost !== null )
+			$phpFpmService->setEnvironmentVariable( 'SMTP_SERVER', $mailHost . ':' . $mailPort );
 
 		$mailAuth = $this->mailAuthentication;
-		if($mailAuth !== null)
-			$phpFpmService->setEnvironmentVariable('SMTP_AUTHENTICATION', $mailAuth);
+		if ( $mailAuth !== null )
+			$phpFpmService->setEnvironmentVariable( 'SMTP_AUTHENTICATION', $mailAuth );
 
 		$mailUsername = $this->mailUsername;
-		if($mailUsername !== null)
-			$phpFpmService->setEnvironmentVariable('SMTP_USER', $mailUsername);
+		if ( $mailUsername !== null )
+			$phpFpmService->setEnvironmentVariable( 'SMTP_USER', $mailUsername );
 
 		$mailPassword = $this->mailPassword;
-		if($mailPassword !== null)
-			$phpFpmService->setEnvironmentVariable('SMTP_PASSWORD', $mailPassword);
+		if ( $mailPassword !== null )
+			$phpFpmService->setEnvironmentVariable( 'SMTP_PASSWORD', $mailPassword );
 
-		$this->addAppSource($phpFpmService);
-
-		$phpFpmService->setEnvironmentVariablesCallback(function() use ($mainService) {
+		$phpFpmService->setEnvironmentVariablesCallback( function () use ( $mainService ) {
 			return $mainService->getEnvironmentVariables();
-		});
+		} );
 
-		$mainService->addSidekick($phpFpmService);
-		$infrastructure->addService($phpFpmService);
+		$mainService->addSidekick( $phpFpmService );
+		$customize($phpFpmService);
+		$infrastructure->addService( $phpFpmService );
 	}
 
 	/**
@@ -117,77 +125,40 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 	}
 
 	/**
-	 * @param string $hostDirectory
-	 * @param string $containerDirectory
-	 * @return $this
-	 */
-	public function setAppMount(string $hostDirectory, string $containerDirectory) {
-		$this->appTarget = [$hostDirectory, $containerDirectory];
-
-		return $this;
-	}
-
-	/**
-	 * @param Service $appService
-	 * @return $this
-	 */
-	public function setAppService(Service $appService) {
-		$this->appTarget = $appService;
-
-		return $this;
-	}
-
-	/**
 	 * @param $commandName
 	 * @param $command
 	 * @param Service $mainService
 	 * @return Service
 	 */
-	public function makeCommand( $commandName, $command, Service $mainService) {
+	public function makeCommand( $commandName, $command, Service $mainService ) {
 
 		$phpCommandService = new Service();
-		$phpCommandService->setCommand($command);
-		$phpCommandService->setName( function() use ($mainService, $commandName) {
-			$name = '-PHP-'.$commandName.'-'.$mainService->getName() ;
+		$phpCommandService->setCommand( $command );
+		$phpCommandService->setName( function () use ( $mainService, $commandName ) {
+			$name = '-PHP-' . $commandName . '-' . $mainService->getName();
 			return $name;
-		});
+		} );
 		$this->setImage( $phpCommandService );
-		$phpCommandService->setRestart(Service::RESTART_START_ONCE);
-		$this->addAppSource($phpCommandService);
+		$phpCommandService->setRestart( Service::RESTART_START_ONCE );
 
-		$phpCommandService->setEnvironmentVariablesCallback(function() use ($mainService) {
+		$phpCommandService->setEnvironmentVariablesCallback( function () use ( $mainService ) {
 			return $mainService->getEnvironmentVariables();
-		});
+		} );
 
 
-		$phpCommandService->addLinksFrom($mainService);
+		$phpCommandService->addLinksFrom( $mainService );
 
-		$mainService->addSidekick($phpCommandService);
+		$mainService->addSidekick( $phpCommandService );
 		return $phpCommandService;
 	}
 
-	/**
-	 * @param $phpFpmService
-	 */
-	protected function addAppSource(Service $phpFpmService) {
-		$appTarget = $this->appTarget;
-
-		if ($appTarget instanceof Service) {
-			$phpFpmService->addVolumeFrom($appTarget);
-			return;
-		}
-
-		list($hostDirectory, $containerDirectory) = $appTarget;
-		$phpFpmService->addVolume($hostDirectory, $containerDirectory);
-	}
-
-	protected function setImage(Service $service) {
+	protected function setImage( Service $service ) {
 		$image = self::PHP_IMAGE;
-		if( $this->debug ) {
-			$image = $this->debugImageBuilder->makeImage(self::PHP_IMAGE,'2.6.0alpha1');
-			$service->setEnvironmentVariable('XDEBUG_REMOTE_HOST', gethostname());
-			if($this->debugListener !== null)
-				$service->setEnvironmentVariable('XDEBUG_REMOTE_HOST', $this->debugListener);
+		if ( $this->debug ) {
+			$image = $this->debugImageBuilder->makeImage( self::PHP_IMAGE, '2.6.0alpha1' );
+			$service->setEnvironmentVariable( 'XDEBUG_REMOTE_HOST', gethostname() );
+			if ( $this->debugListener !== null )
+				$service->setEnvironmentVariable( 'XDEBUG_REMOTE_HOST', $this->debugListener );
 		}
 
 		$service->setImage( $image );
