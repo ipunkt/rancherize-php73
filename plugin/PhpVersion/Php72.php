@@ -148,7 +148,6 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 
 		$phpCommandService->addLinksFrom( $mainService );
 
-		$mainService->addSidekick( $phpCommandService );
 		return $phpCommandService;
 	}
 
