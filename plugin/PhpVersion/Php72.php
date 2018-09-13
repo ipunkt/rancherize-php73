@@ -136,7 +136,7 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 		$phpCommandService = new Service();
 		$phpCommandService->setCommand( $command );
 		$phpCommandService->setName( function () use ( $mainService, $commandName ) {
-			$name = '-PHP-' . $commandName . '-' . $mainService->getName();
+			$name = 'PHP-' . $commandName . '-' . $mainService->getName();
 			return $name;
 		} );
 		$this->setImage( $phpCommandService );
