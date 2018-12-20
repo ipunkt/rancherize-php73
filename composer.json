@@ -21,6 +21,6 @@
   "require-dev": {
   },
   "extra":{
-    "rancherize-provider":"RancherizePhp72\\Php72Provider"
+    "rancherize-provider":"RancherizePhp73\\Php73Provider"
   }
 }
