@@ -24,9 +24,9 @@ use Rancherize\Configuration\Configuration;
  * Class Php72
  * @package RancherizePhp70\PhpVersion
  */
-class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, DefaultTimezone, MailTarget, DebugImage {
+class Php73 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, DefaultTimezone, MailTarget, DebugImage {
 
-	const PHP_IMAGE = 'ipunktbs/php:7.2-fpm';
+	const PHP_IMAGE = 'ipunktbs/php:7.3-fpm';
 	use MemoryLimitTrait;
 	use PostLimitTrait;
 	use UploadFileLimitTrait;
@@ -122,7 +122,7 @@ class Php72 implements PhpVersion, MemoryLimit, PostLimit, UploadFileLimit, Defa
 	 * @return string
 	 */
 	public function getVersion() {
-		return '7.2';
+		return '7.3';
 	}
 
 	/**

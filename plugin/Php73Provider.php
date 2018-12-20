@@ -4,21 +4,21 @@ use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\AlpineDebugImageBui
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\PhpFpmMaker;
 use Rancherize\Plugin\Provider;
 use Rancherize\Plugin\ProviderTrait;
-use RancherizePhp72\PhpVersion\Php72;
+use RancherizePhp72\PhpVersion\Php73;
 
 /**
  * Class Php70Provider
  * @package RancherizePhp70
  */
-class Php72Provider implements Provider {
+class Php73Provider implements Provider {
 
 	use ProviderTrait;
 
 	/**
 	 */
 	public function register() {
-		$this->container[Php72::class] = function($c) {
-			return new Php72( $c[AlpineDebugImageBuilder::class] );
+		$this->container[Php73::class] = function($c) {
+			return new Php73( $c[AlpineDebugImageBuilder::class] );
 		};
 	}
 
@@ -30,6 +30,6 @@ class Php72Provider implements Provider {
 		 */
 		$fpmMaker = $this->container[PhpFpmMaker::class];
 
-		$fpmMaker->addVersion( $this->container[Php72::class] );
+		$fpmMaker->addVersion( $this->container[Php73::class] );
 	}
 }
