@@ -1,6 +1,6 @@
 {
-  "name": "ipunkt/rancherize-php72",
-  "description": "Rancherize plugin which adds php72",
+  "name": "ipunkt/rancherize-php73",
+  "description": "Rancherize plugin which adds php73",
   "type": "project",
   "license": "MIT",
   "authors": [
