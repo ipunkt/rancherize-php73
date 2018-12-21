@@ -1,4 +1,4 @@
-<?php namespace RancherizePhp72\PhpVersion;
+<?php namespace RancherizePhp73\PhpVersion;
 
 use Closure;
 use Rancherize\Blueprint\Infrastructure\Infrastructure;

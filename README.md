@@ -1,2 +1,2 @@
-# rancherize-php72
-php72 fpm for rancherize
+# rancherize-php73
+php 7.3 fpm for rancherize

@@ -1,10 +1,10 @@
-<?php namespace RancherizePhp72;
+<?php namespace RancherizePhp73;
 
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\AlpineDebugImageBuilder;
 use Rancherize\Blueprint\Infrastructure\Service\Maker\PhpFpm\PhpFpmMaker;
 use Rancherize\Plugin\Provider;
 use Rancherize\Plugin\ProviderTrait;
-use RancherizePhp72\PhpVersion\Php73;
+use RancherizePhp73\PhpVersion\Php73;
 
 /**
  * Class Php70Provider
